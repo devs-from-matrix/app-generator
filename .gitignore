@@ -3,3 +3,7 @@
 *.iml
 out
 gen
+
+# Project generated files
+node_modules
+generated
