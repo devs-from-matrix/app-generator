@@ -15,9 +15,9 @@ this project was generated with https://github.com/devs-from-matrix/basic-templa
 
 ## To run all tasks you can use
 
-`gulp`
+`gulp -d [domain-name] -t [template-name]`
 
-## To run the task `generate_template`
+## To run the task `generate`
 
 `gulp generate -d [domain-name] -t [template-name]`
 
