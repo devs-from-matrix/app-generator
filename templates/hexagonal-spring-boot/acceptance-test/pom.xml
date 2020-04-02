@@ -15,4 +15,28 @@
       <artifactId>domain</artifactId>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.github.cukedoctor</groupId>
+        <artifactId>cukedoctor-maven-plugin</artifactId>
+        <version>${cukedoctor-maven-plugin.version}</version>
+        <configuration>
+          <featuresDir>target/cucumber</featuresDir>
+          <outputFileName>ExamplePoetry</outputFileName>
+          <documentTitle>Example Poetry - Living Documentation</documentTitle>
+          <docVersion>${project.version}</docVersion>
+          <toc>center</toc>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <phase>verify</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
