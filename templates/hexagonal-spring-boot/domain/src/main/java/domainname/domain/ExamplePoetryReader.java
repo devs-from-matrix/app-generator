@@ -2,8 +2,10 @@ package domainname.domain;
 
 import domainname.domain.port.ExampleObtainPoem;
 import domainname.domain.port.ExampleRequestVerse;
+import domainname.model.ExamplePoemInfo;
 
 public class ExamplePoetryReader implements ExampleRequestVerse {
+
   private ExampleObtainPoem obtainPoem;
 
   public ExamplePoetryReader() {
@@ -16,7 +18,7 @@ public class ExamplePoetryReader implements ExampleRequestVerse {
   }
 
   @Override
-  public String giveMeSomePoetry() {
+  public ExamplePoemInfo giveMeSomePoetry() {
     return obtainPoem.getMeSomePoetry();
   }
 }

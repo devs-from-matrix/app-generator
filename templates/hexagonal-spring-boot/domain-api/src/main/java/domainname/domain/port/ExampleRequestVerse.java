@@ -1,6 +1,8 @@
 package domainname.domain.port;
 
+import domainname.model.ExamplePoemInfo;
+
 public interface ExampleRequestVerse {
 
-  String giveMeSomePoetry();
+  ExamplePoemInfo giveMeSomePoetry();
 }
