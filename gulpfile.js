@@ -14,7 +14,8 @@ const gulpReplace = require('gulp-replace');
 
 // Validate service name
 const domainName = argv.d || argv.domain;
-assertOk(/^([a-z][a-z0-9]+)(\-[a-z][a-z0-9]+)*$/.test(domainName), `Invalid service name "${domainName}"`);
+assertOk(/^([a-z][a-z0-9]+)(\-[a-z][a-z0-9]+)*$/.test(domainName),
+    `Invalid service name "${domainName}"`);
 // Build some helper const
 const domainNameLowerCase = _.lowerCase(domainName);
 
@@ -26,49 +27,66 @@ assertOk(!_.isEmpty(templateName), 'templateName is required');
  * Generate sources into generated folder
  */
 gulp.task('generate', () => {
-    console.log(`Generating ${domainNameLowerCase}...`);
-    const domainWords = _.words(domainName);
-    const domainGroupWords = _.concat(['com', 'dfm'], domainWords);
-    const domainNameInitials = _.toUpper(_.join(_.map(domainWords, _.first), ''));
-    const domainNameStartCase = _.startCase(domainName);
-    const domainNameUpperCase = _.toUpper(_.snakeCase(domainWords));
-    const domainPackage = _.join(domainGroupWords, '.');
-    const newServicePath = _.join(domainGroupWords, path.sep);
+  const domainWords = _.words(domainName);
+  const domainGroupWords = _.concat(['com', 'dfm'], domainWords);
+  const domainNameInitials = _.toUpper(_.join(_.map(domainWords, _.first), ''));
+  const domainNameStartCase = _.startCase(domainName);
+  const domainNameUpperCase = _.toUpper(_.snakeCase(domainWords));
+  const domainPackage = _.join(domainGroupWords, '.');
+  const newServicePath = _.join(domainGroupWords, path.sep);
 
-    // ensure your have the generated directory
-    fs.ensureDir("generated");
+  // ensure your have the generated directory
+  fs.ensureDir("generated");
 
-    // Interpolate
-    const parse = gulpReplace('domainName', domainName);
+  // Interpolate
+  const parsePackageName = gulpReplace('domainname', domainPackage);
+  const parseArtifactId = gulpReplace('artifactName', domainNameLowerCase);
 
-    // Update filename & file path
-    const rename = gulpRename(function (file) {
-        replace(file, 'template');
-    });
+  // Update filename & file path
+  const rename = gulpRename(function (file) {
+    replace(file, 'domainname');
+  });
 
-    const replace = function (file, name) {
-        if (_.includes(file.basename, name)) {
-            file.basename = _.replace(file.basename, name, newServicePath);
-        }
-        if (_.includes(file.dirname, name)) {
-            file.dirname = _.replace(file.dirname, name, newServicePath);
-        }
-    };
+  const replace = function (file, name) {
+    if (_.includes(file.basename, name)) {
+      file.basename = _.replace(file.basename, name, newServicePath);
+    }
+    if (_.includes(file.dirname, name)) {
+      file.dirname = _.replace(file.dirname, name, newServicePath);
+    }
+  };
 
-    return gulp.src(__dirname + `/templates/${templateName}/**`, {dot: true})
-        .pipe(rename)
-        .pipe(parse)
-        .pipe(gulp.dest(`./generated/`));
+  const filesTobeIgnored = [
+    `!${__dirname}/templates/${templateName}/.idea/**`,
+    `!${__dirname}/templates/${templateName}/acceptance-test/target/**`,
+    `!${__dirname}/templates/${templateName}/domain/target/**`,
+    `!${__dirname}/templates/${templateName}/domain-api/target/**`,
+    `!${__dirname}/templates/${templateName}/acceptance-test/*.iml`,
+    `!${__dirname}/templates/${templateName}/domain/*.iml`,
+    `!${__dirname}/templates/${templateName}/domain-api/*.iml`,
+    `!${__dirname}/templates/${templateName}/acceptance-test/.idea/**`,
+    `!${__dirname}/templates/${templateName}/domain/.idea/**`,
+    `!${__dirname}/templates/${templateName}/domain-api/.idea/**`
+  ];
+
+  const pathSrc = [
+    `${__dirname}/templates/${templateName}/**`, // template path
+    ...filesTobeIgnored, // do not scan intellij files,
+  ];
+  return gulp.src(pathSrc, {dot: true})
+  .pipe(rename)
+  .pipe(parsePackageName)
+  .pipe(parseArtifactId)
+  .pipe(gulp.dest(`./generated/`));
 });
 
-
 gulp.task('cleanup', () => {
-    console.log(`Cleaning up the generated code ...`);
-    return del([
-        'generated/**/*',
-    ]);
+  console.log(`Cleaning up the generated code ...`);
+  return del([
+    'generated/**/*',
+  ]);
 });
 
 gulp.task('default', function (done) {
-    runSequence('cleanup', 'generate', done);
+  runSequence('cleanup', 'generate', done);
 });

@@ -7,3 +7,6 @@ gen
 # Project generated files
 node_modules
 generated
+/templates/hexagonal-spring-boot/acceptance-test/target
+/templates/hexagonal-spring-boot/domain/target
+/templates/hexagonal-spring-boot/domain-api/target
