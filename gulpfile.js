@@ -61,12 +61,15 @@ gulp.task('generate', () => {
     `!${__dirname}/templates/${templateName}/acceptance-test/target/**`,
     `!${__dirname}/templates/${templateName}/domain/target/**`,
     `!${__dirname}/templates/${templateName}/domain-api/target/**`,
+    `!${__dirname}/templates/${templateName}/rest-adapter/target/**`,
     `!${__dirname}/templates/${templateName}/acceptance-test/*.iml`,
     `!${__dirname}/templates/${templateName}/domain/*.iml`,
     `!${__dirname}/templates/${templateName}/domain-api/*.iml`,
+    `!${__dirname}/templates/${templateName}/rest-adapter/*.iml`,
     `!${__dirname}/templates/${templateName}/acceptance-test/.idea/**`,
     `!${__dirname}/templates/${templateName}/domain/.idea/**`,
-    `!${__dirname}/templates/${templateName}/domain-api/.idea/**`
+    `!${__dirname}/templates/${templateName}/domain-api/.idea/**`,
+    `!${__dirname}/templates/${templateName}/rest-adapter/.idea/**`,
   ];
 
   const pathSrc = [

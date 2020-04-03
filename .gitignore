@@ -10,3 +10,4 @@ generated
 /templates/hexagonal-spring-boot/acceptance-test/target
 /templates/hexagonal-spring-boot/domain/target
 /templates/hexagonal-spring-boot/domain-api/target
+/templates/hexagonal-spring-boot/rest-adapter/target

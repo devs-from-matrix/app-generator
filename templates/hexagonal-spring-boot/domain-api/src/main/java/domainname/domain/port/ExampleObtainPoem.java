@@ -1,6 +1,7 @@
 package domainname.domain.port;
 
-import domainname.model.ExamplePoemInfo;
+
+import domainname.domain.model.ExamplePoemInfo;
 
 public interface ExampleObtainPoem {
 
