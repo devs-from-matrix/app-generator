@@ -13,10 +13,20 @@
     <dependency>
       <groupId>org.dfm</groupId>
       <artifactId>rest-adapter</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>classmate</artifactId>
+          <groupId>com.fasterxml</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.dfm</groupId>
       <artifactId>domain</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.dfm</groupId>
+      <artifactId>jpa-adapter</artifactId>
     </dependency>
     <!-- Test -->
     <dependency>

@@ -16,8 +16,10 @@ const gulpReplace = require('gulp-replace');
 const domainName = argv.d || argv.domain;
 assertOk(/^([a-z][a-z0-9]+)(\-[a-z][a-z0-9]+)*$/.test(domainName),
     `Invalid service name "${domainName}"`);
+
 // Build some helper const
-const domainNameLowerCase = _.lowerCase(domainName);
+const domainNameLowerCase = domainName.toLowerCase();
+console.log(domainNameLowerCase);
 
 // Validate template name
 const templateName = argv.t || argv.templateName;
@@ -62,14 +64,19 @@ gulp.task('generate', () => {
     `!${__dirname}/templates/${templateName}/domain/target/**`,
     `!${__dirname}/templates/${templateName}/domain-api/target/**`,
     `!${__dirname}/templates/${templateName}/rest-adapter/target/**`,
+    `!${__dirname}/templates/${templateName}/jpa-adapter/target/**`,
+
     `!${__dirname}/templates/${templateName}/acceptance-test/*.iml`,
     `!${__dirname}/templates/${templateName}/domain/*.iml`,
     `!${__dirname}/templates/${templateName}/domain-api/*.iml`,
     `!${__dirname}/templates/${templateName}/rest-adapter/*.iml`,
+    `!${__dirname}/templates/${templateName}/jpa-adapter/*.iml`,
+
     `!${__dirname}/templates/${templateName}/acceptance-test/.idea/**`,
     `!${__dirname}/templates/${templateName}/domain/.idea/**`,
     `!${__dirname}/templates/${templateName}/domain-api/.idea/**`,
     `!${__dirname}/templates/${templateName}/rest-adapter/.idea/**`,
+    `!${__dirname}/templates/${templateName}/jpa-adapter/.idea/**`,
   ];
 
   const pathSrc = [

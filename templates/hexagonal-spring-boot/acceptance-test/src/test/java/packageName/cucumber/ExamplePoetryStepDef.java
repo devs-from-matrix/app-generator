@@ -1,11 +1,11 @@
 package packageName.cucumber;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.lenient;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java8.En;
+import io.cucumber.java8.HookNoArgsBody;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +20,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import packageName.ExamplePoetryE2EApplication;
 import packageName.domain.model.ExamplePoemInfo;
 import packageName.domain.port.ExampleObtainPoem;
+import packageName.repository.dao.ExamplePoetryDao;
+import packageName.repository.entity.ExamplePoemEntity;
 
 
 @ExtendWith(SpringExtension.class)
@@ -33,17 +35,17 @@ public class ExamplePoetryStepDef implements En {
   private int port;
   private ResponseEntity<ExamplePoemInfo> responseEntity;
 
-  public ExamplePoetryStepDef(ExampleObtainPoem obtainPoem, TestRestTemplate restTemplate) {
+  public ExamplePoetryStepDef(TestRestTemplate restTemplate, ExamplePoetryDao poetryDao) {
 
     DataTableType((Map<String, String> row) -> ExamplePoemInfo.builder().poem(row.get("poem")).build());
+    DataTableType((Map<String, String> row) -> ExamplePoemEntity.builder().poem(row.get("poem")).build());
 
-    Before(() -> {
-      // perform before actions
-    });
+    Before((HookNoArgsBody) poetryDao::deleteAll);
+    After((HookNoArgsBody) poetryDao::deleteAll);
 
     Given("the following poem exists in the library", (DataTable dataTable) -> {
-      List<ExamplePoemInfo> examplePoemInfos = dataTable.asList(ExamplePoemInfo.class);
-      lenient().when(obtainPoem.getMeSomePoetry()).thenReturn(examplePoemInfos.get(0));
+      List<ExamplePoemEntity> poems = dataTable.asList(ExamplePoemEntity.class);
+      poetryDao.saveAll(poems);
     });
 
     When("user requests for verses", () -> {

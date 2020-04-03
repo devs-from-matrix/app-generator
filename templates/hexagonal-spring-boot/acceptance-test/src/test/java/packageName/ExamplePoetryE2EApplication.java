@@ -1,14 +1,14 @@
 package packageName;
 
-import packageName.domain.ExamplePoetryReader;
-import packageName.domain.port.ExampleObtainPoem;
-import packageName.domain.port.ExampleRequestVerse;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
+import packageName.domain.ExamplePoetryReader;
+import packageName.domain.port.ExampleObtainPoem;
+import packageName.domain.port.ExampleRequestVerse;
+import packageName.repository.config.JpaAdapterConfig;
 
 @SpringBootApplication
 public class ExamplePoetryE2EApplication {
@@ -18,14 +18,11 @@ public class ExamplePoetryE2EApplication {
   }
 
   @TestConfiguration
-  @ComponentScan(basePackages = "packageName")
+  @Import(JpaAdapterConfig.class)
   static class ExamplePoetryConfig {
 
-    @MockBean
-    private ExampleObtainPoem obtainPoem;
-
     @Bean
-    public ExampleRequestVerse getRequestVerse() {
+    public ExampleRequestVerse getRequestVerse(final ExampleObtainPoem obtainPoem) {
       return new ExamplePoetryReader(obtainPoem);
     }
   }
