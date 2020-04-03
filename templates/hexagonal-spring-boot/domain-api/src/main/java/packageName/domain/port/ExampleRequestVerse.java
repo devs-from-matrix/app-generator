@@ -1,7 +1,7 @@
-package domainname.domain.port;
+package packageName.domain.port;
 
 
-import domainname.domain.model.ExamplePoemInfo;
+import packageName.domain.model.ExamplePoemInfo;
 
 public interface ExampleRequestVerse {
 
