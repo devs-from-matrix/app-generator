@@ -1,8 +1,8 @@
-package domainname;
+package packageName;
 
-import domainname.domain.ExamplePoetryReader;
-import domainname.domain.port.ExampleObtainPoem;
-import domainname.domain.port.ExampleRequestVerse;
+import packageName.domain.ExamplePoetryReader;
+import packageName.domain.port.ExampleObtainPoem;
+import packageName.domain.port.ExampleRequestVerse;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -18,7 +18,7 @@ public class ExamplePoetryE2EApplication {
   }
 
   @TestConfiguration
-  @ComponentScan(basePackages = "domainname")
+  @ComponentScan(basePackages = "packageName")
   static class ExamplePoetryConfig {
 
     @MockBean

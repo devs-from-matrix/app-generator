@@ -1,9 +1,8 @@
-package domainname.domain;
+package packageName.domain;
 
-import domainname.domain.model.ExamplePoemInfo;
-import domainname.domain.port.ExampleObtainPoem;
-import domainname.domain.port.ExampleRequestVerse;
-import domainname.model.ExamplePoemInfo;
+import packageName.domain.model.ExamplePoemInfo;
+import packageName.domain.port.ExampleObtainPoem;
+import packageName.domain.port.ExampleRequestVerse;
 
 public class ExamplePoetryReader implements ExampleRequestVerse {
 

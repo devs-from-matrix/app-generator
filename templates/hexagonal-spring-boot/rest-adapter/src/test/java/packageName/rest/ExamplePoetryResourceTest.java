@@ -1,10 +1,10 @@
-package domainname.rest;
+package packageName.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-import domainname.domain.model.ExamplePoemInfo;
-import domainname.domain.port.ExampleRequestVerse;
+import packageName.domain.model.ExamplePoemInfo;
+import packageName.domain.port.ExampleRequestVerse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +26,6 @@ public class ExamplePoetryResourceTest {
 
   private static final String LOCALHOST = "http://localhost:";
   private static final String API_URI = "/api/v1/poems";
-
   @LocalServerPort
   private int port;
 

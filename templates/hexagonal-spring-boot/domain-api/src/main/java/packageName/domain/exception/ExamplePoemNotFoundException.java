@@ -1,4 +1,4 @@
-package domainname.exception;
+package packageName.domain.exception;
 
 public class ExamplePoemNotFoundException extends RuntimeException {
 

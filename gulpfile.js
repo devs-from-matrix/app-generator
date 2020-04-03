@@ -28,7 +28,7 @@ assertOk(!_.isEmpty(templateName), 'templateName is required');
  */
 gulp.task('generate', () => {
   const domainWords = _.words(domainName);
-  const domainGroupWords = _.concat(['com', 'dfm'], domainWords);
+  const domainGroupWords = _.concat(['org', 'dfm'], domainWords);
   const domainNameInitials = _.toUpper(_.join(_.map(domainWords, _.first), ''));
   const domainNameStartCase = _.startCase(domainName);
   const domainNameUpperCase = _.toUpper(_.snakeCase(domainWords));
@@ -39,12 +39,12 @@ gulp.task('generate', () => {
   fs.ensureDir("generated");
 
   // Interpolate
-  const parsePackageName = gulpReplace('domainname', domainPackage);
+  const parsePackageName = gulpReplace('packageName', domainPackage);
   const parseArtifactId = gulpReplace('artifactName', domainNameLowerCase);
 
   // Update filename & file path
   const rename = gulpRename(function (file) {
-    replace(file, 'domainname');
+    replace(file, 'packageName');
   });
 
   const replace = function (file, name) {

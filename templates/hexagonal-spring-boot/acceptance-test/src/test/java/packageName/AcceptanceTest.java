@@ -1,12 +1,11 @@
-package domainname;
+package packageName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import domainname.domain.ExamplePoetryReader;
-import domainname.domain.model.ExamplePoemInfo;
-import domainname.domain.port.ExampleObtainPoem;
-import domainname.domain.port.ExampleRequestVerse;
-import domainname.model.ExamplePoemInfo;
+import packageName.domain.ExamplePoetryReader;
+import packageName.domain.model.ExamplePoemInfo;
+import packageName.domain.port.ExampleObtainPoem;
+import packageName.domain.port.ExampleRequestVerse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
