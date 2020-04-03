@@ -12,7 +12,16 @@
   <dependencies>
     <dependency>
       <groupId>org.dfm</groupId>
+      <artifactId>rest-adapter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.dfm</groupId>
       <artifactId>domain</artifactId>
+    </dependency>
+    <!-- Test -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
     </dependency>
   </dependencies>
   <build>
