@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
+    url: jdbc:hsqldb:mem:testdb;sql.syntax_ora=true;shutdown=true
+    username: sa
+    password:
+    schema: classpath:sql/schema-hsqldb.sql
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none

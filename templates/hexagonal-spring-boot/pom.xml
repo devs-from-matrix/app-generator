@@ -35,6 +35,7 @@
     <module>acceptance-test</module>
     <module>rest-adapter</module>
     <module>jpa-adapter</module>
+    <module>bootstrap</module>
   </modules>
   <dependencyManagement>
     <dependencies>
