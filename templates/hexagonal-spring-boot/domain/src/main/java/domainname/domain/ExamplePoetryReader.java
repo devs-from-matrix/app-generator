@@ -3,6 +3,7 @@ package domainname.domain;
 import domainname.domain.model.ExamplePoemInfo;
 import domainname.domain.port.ExampleObtainPoem;
 import domainname.domain.port.ExampleRequestVerse;
+import domainname.model.ExamplePoemInfo;
 
 public class ExamplePoetryReader implements ExampleRequestVerse {
 
