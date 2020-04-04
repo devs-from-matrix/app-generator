@@ -1,6 +1,5 @@
 package packageName.domain.port;
 
-
 import java.util.List;
 import packageName.domain.model.Example;
 
