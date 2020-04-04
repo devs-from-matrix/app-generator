@@ -25,9 +25,9 @@ public class AcceptanceTest {
   @DisplayName("should be able to get examples when asked for examples from hard coded examples")
   public void getExamplesFromHardCoded() {
   /*
-      RequestExample - left side port
-      ExampleDomain - hexagon (domain)
-      ExampleObtainPoem   - right side port (hardcoded as it uses
+      RequestExample    - left side port
+      ExampleDomain     - hexagon (domain)
+      ObtainExample     - right side port
    */
     RequestExample requestExample = new ExampleDomain(); // the poem is hard coded
     ExampleInfo exampleInfo = requestExample.getExamples();
@@ -38,12 +38,12 @@ public class AcceptanceTest {
 
   @Test
   @DisplayName("should be able to get examples when asked for examples from stub")
-  public void getExamplesFromMockedStub(@Mock ObtainExample obtainPoem) {
+  public void getExamplesFromMockedStub(@Mock ObtainExample obtainExample) {
     // Stub
     Example example = Example.builder().id(1L).description("I want to sleep\r\nSwat the flies\r\nSoftly, please.\r\n\r\n-- Masaoka Shiki (1867-1902)").build();
-    Mockito.lenient().when(obtainPoem.getAllExamples()).thenReturn(List.of(example));
+    Mockito.lenient().when(obtainExample.getAllExamples()).thenReturn(List.of(example));
     // hexagon
-    RequestExample requestExample = new ExampleDomain(obtainPoem);
+    RequestExample requestExample = new ExampleDomain(obtainExample);
     ExampleInfo exampleInfo = requestExample.getExamples();
     assertThat(exampleInfo).isNotNull();
     assertThat(exampleInfo.getExamples()).isNotEmpty().extracting("description")
