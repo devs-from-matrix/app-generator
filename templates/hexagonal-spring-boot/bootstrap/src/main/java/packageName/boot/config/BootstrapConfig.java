@@ -13,7 +13,7 @@ import packageName.repository.config.JpaAdapterConfig;
 public class BootstrapConfig {
 
   @Bean
-  public RequestExample getRequestVerse(ObtainExample obtainExample) {
+  public RequestExample getRequestExample(ObtainExample obtainExample) {
     return new ExampleDomain(obtainExample);
   }
 }
