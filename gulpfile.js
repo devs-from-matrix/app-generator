@@ -1,41 +1,39 @@
 const _ = require('lodash');
 const path = require('path');
 const gulp = require('gulp');
-const gulpTemplate = require('gulp-template');
 const gulpRename = require('gulp-rename');
 const runSequence = require('gulp4-run-sequence');
 const argv = require('yargs').argv;
 const assertOk = require('assert-ok');
-const moment = require('moment');
-const generatorVersion = require('./package.json').version;
 const del = require('del');
 const fs = require("fs-extra");
 const gulpReplace = require('gulp-replace');
-
-// Validate service name
-const domainName = argv.d || argv.domain;
-assertOk(/^([a-z][a-z0-9]+)(\-[a-z][a-z0-9]+)*$/.test(domainName),
-    `Invalid service name "${domainName}"`);
-
-// Build some helper const
-const domainNameLowerCase = domainName.toLowerCase();
-console.log(domainNameLowerCase);
-
-// Validate template name
-const templateName = argv.t || argv.templateName;
-assertOk(!_.isEmpty(templateName), 'templateName is required');
 
 /**
  * Generate sources into generated folder
  */
 gulp.task('generate', () => {
+
+  // Validate service name
+  const domainName = argv.d || argv.domain;
+  assertOk(/^([a-z][a-z0-9]+)(\-[a-z][a-z0-9]+)*$/.test(domainName),
+      `Invalid domain name "${domainName}"`);
+
+  // Validate template name
+  const templateName = argv.t || argv.templateName;
+  assertOk(!_.isEmpty(templateName), 'templateName is required');
+
+  const domainNameLowerCase = domainName.toLowerCase();
+  const domainNameCamelCase = _.camelCase(domainName);
   const domainWords = _.words(domainName);
   const domainGroupWords = _.concat(['org', 'dfm'], domainWords);
-  const domainNameInitials = _.toUpper(_.join(_.map(domainWords, _.first), ''));
-  const domainNameStartCase = _.startCase(domainName);
+  const domainNameStartCase = _.startCase(domainName).replace(' ', '');
   const domainNameUpperCase = _.toUpper(_.snakeCase(domainWords));
   const domainPackage = _.join(domainGroupWords, '.');
   const newServicePath = _.join(domainGroupWords, path.sep);
+  const domainNamePlural = domainName.endsWith('y')
+      ? `${domainNameCamelCase.substr(0, domainNameCamelCase.length - 1)}ies`
+      : `${domainNameCamelCase}s`;
 
   // ensure your have the generated directory
   fs.ensureDir("generated");
@@ -43,18 +41,24 @@ gulp.task('generate', () => {
   // Interpolate
   const parsePackageName = gulpReplace('packageName', domainPackage);
   const parseArtifactId = gulpReplace('artifactName', domainNameLowerCase);
+  const parsePluralLowerCase = gulpReplace(/examples/g, domainNamePlural);
+  const parsePluralStartCase = gulpReplace(/Examples/g, _.startCase(domainNamePlural).replace(' ', ''));
+  const parseStartCase = gulpReplace(/Example/g, domainNameStartCase);
+  const parseLowerCase = gulpReplace(/example/g, domainNameCamelCase);
+  const parseUpperCase = gulpReplace(/EXAMPLE/g, domainNameUpperCase);
 
   // Update filename & file path
-  const rename = gulpRename(function (file) {
-    replace(file, 'packageName');
+  const renamePackage = gulpRename(function (file) {
+    replaceName(file, 'packageName', newServicePath);
+    replaceName(file, 'Example', domainNameStartCase);
   });
 
-  const replace = function (file, name) {
-    if (_.includes(file.basename, name)) {
-      file.basename = _.replace(file.basename, name, newServicePath);
+  const replaceName = function (file, oldName, newName) {
+    if (_.includes(file.basename, oldName)) {
+      file.basename = _.replace(file.basename, oldName, newName);
     }
-    if (_.includes(file.dirname, name)) {
-      file.dirname = _.replace(file.dirname, name, newServicePath);
+    if (_.includes(file.dirname, oldName)) {
+      file.dirname = _.replace(file.dirname, oldName, newName);
     }
   };
 
@@ -87,9 +91,14 @@ gulp.task('generate', () => {
     ...filesTobeIgnored, // do not scan intellij files,
   ];
   return gulp.src(pathSrc, {dot: true})
-  .pipe(rename)
+  .pipe(renamePackage)
   .pipe(parsePackageName)
   .pipe(parseArtifactId)
+  .pipe(parsePluralLowerCase)
+  .pipe(parsePluralStartCase)
+  .pipe(parseStartCase)
+  .pipe(parseLowerCase)
+  .pipe(parseUpperCase)
   .pipe(gulp.dest(`./generated/`));
 });
 
