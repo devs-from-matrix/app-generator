@@ -22,7 +22,7 @@ public class ExampleE2EApplication {
   static class ExampleConfig {
 
     @Bean
-    public RequestExample getRequestVerse(final ObtainExample obtainExample) {
+    public RequestExample getRequestExample(final ObtainExample obtainExample) {
       return new ExampleDomain(obtainExample);
     }
   }
