@@ -1,11 +1,8 @@
 package packageName;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import packageName.domain.ExamplePoetryReader;
-import packageName.domain.model.ExamplePoemInfo;
-import packageName.domain.port.ExampleObtainPoem;
-import packageName.domain.port.ExampleRequestVerse;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,32 +11,42 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import packageName.domain.ExampleDomain;
+import packageName.domain.model.Example;
+import packageName.domain.model.ExampleInfo;
+import packageName.domain.port.ObtainExample;
+import packageName.domain.port.RequestExample;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(JUnitPlatform.class)
 public class AcceptanceTest {
 
   @Test
-  @DisplayName("Should be able to get verses when asked for poetry")
-  public void getVersesFromHardCodedPoetryReader() {
+  @DisplayName("should be able to get examples when asked for examples from hard coded examples")
+  public void getExamplesFromHardCoded() {
   /*
-      ExampleRequestVerse - left side port
-      ExamplePoetryReader - hexagon (domain)
+      RequestExample - left side port
+      ExampleDomain - hexagon (domain)
       ExampleObtainPoem   - right side port (hardcoded as it uses
    */
-    ExampleRequestVerse poetryReader = new ExamplePoetryReader(); // the poem is hard coded
-    ExamplePoemInfo verses = poetryReader.giveMeSomePoetry();
-    assertEquals("If you could read a leaf or tree\r\nyoud have no need of books.\r\n-- Alistair Cockburn (1987)", verses.getPoem());
+    RequestExample requestExample = new ExampleDomain(); // the poem is hard coded
+    ExampleInfo exampleInfo = requestExample.getExamples();
+    assertThat(exampleInfo).isNotNull();
+    assertThat(exampleInfo.getExamples()).isNotEmpty().extracting("description")
+        .contains("If you could read a leaf or tree\r\nyoud have no need of books.\r\n-- Alistair Cockburn (1987)");
   }
 
   @Test
-  @DisplayName("Should be able to get verses when asked for poetry from a mocked poetry library")
-  public void getVersesFromMockedPoetryReader(@Mock ExampleObtainPoem obtainPoem) {
+  @DisplayName("should be able to get examples when asked for examples from stub")
+  public void getExamplesFromMockedStub(@Mock ObtainExample obtainPoem) {
     // Stub
-    Mockito.lenient().when(obtainPoem.getMeSomePoetry()).thenReturn(ExamplePoemInfo.builder().poem("I want to sleep\r\nSwat the flies\r\nSoftly, please.\r\n\r\n-- Masaoka Shiki (1867-1902)").build());
+    Example example = Example.builder().id(1L).description("I want to sleep\r\nSwat the flies\r\nSoftly, please.\r\n\r\n-- Masaoka Shiki (1867-1902)").build();
+    Mockito.lenient().when(obtainPoem.getAllExamples()).thenReturn(List.of(example));
     // hexagon
-    ExampleRequestVerse poetryReader = new ExamplePoetryReader(obtainPoem);
-    ExamplePoemInfo verses = poetryReader.giveMeSomePoetry();
-    assertEquals("I want to sleep\r\nSwat the flies\r\nSoftly, please.\r\n\r\n-- Masaoka Shiki (1867-1902)", verses.getPoem());
+    RequestExample requestExample = new ExampleDomain(obtainPoem);
+    ExampleInfo exampleInfo = requestExample.getExamples();
+    assertThat(exampleInfo).isNotNull();
+    assertThat(exampleInfo.getExamples()).isNotEmpty().extracting("description")
+        .contains("I want to sleep\r\nSwat the flies\r\nSoftly, please.\r\n\r\n-- Masaoka Shiki (1867-1902)");
   }
 }

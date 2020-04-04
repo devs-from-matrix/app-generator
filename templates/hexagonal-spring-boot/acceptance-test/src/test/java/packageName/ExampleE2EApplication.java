@@ -5,25 +5,25 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import packageName.domain.ExamplePoetryReader;
-import packageName.domain.port.ExampleObtainPoem;
-import packageName.domain.port.ExampleRequestVerse;
+import packageName.domain.ExampleDomain;
+import packageName.domain.port.ObtainExample;
+import packageName.domain.port.RequestExample;
 import packageName.repository.config.JpaAdapterConfig;
 
 @SpringBootApplication
-public class ExamplePoetryE2EApplication {
+public class ExampleE2EApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(ExamplePoetryE2EApplication.class);
+    SpringApplication.run(ExampleE2EApplication.class);
   }
 
   @TestConfiguration
   @Import(JpaAdapterConfig.class)
-  static class ExamplePoetryConfig {
+  static class ExampleConfig {
 
     @Bean
-    public ExampleRequestVerse getRequestVerse(final ExampleObtainPoem obtainPoem) {
-      return new ExamplePoetryReader(obtainPoem);
+    public RequestExample getRequestVerse(final ObtainExample obtainExample) {
+      return new ExampleDomain(obtainExample);
     }
   }
 }

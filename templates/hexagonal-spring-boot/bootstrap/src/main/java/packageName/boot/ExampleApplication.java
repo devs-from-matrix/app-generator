@@ -6,9 +6,9 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "packageName")
-public class ExamplePoetryApplication {
+public class ExampleApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(ExamplePoetryApplication.class, args);
+    SpringApplication.run(ExampleApplication.class, args);
   }
 }

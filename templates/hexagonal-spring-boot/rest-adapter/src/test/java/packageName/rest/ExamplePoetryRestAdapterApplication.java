@@ -1,10 +1,10 @@
 package packageName.rest;
 
-import packageName.domain.port.ExampleRequestVerse;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import packageName.domain.port.RequestExample;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "packageName")
@@ -15,5 +15,5 @@ public class ExamplePoetryRestAdapterApplication {
   }
 
   @MockBean
-  private ExampleRequestVerse requestVerse;
+  private RequestExample requestExample;
 }

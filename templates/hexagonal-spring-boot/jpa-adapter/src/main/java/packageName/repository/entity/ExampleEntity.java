@@ -11,24 +11,24 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import packageName.domain.model.ExamplePoemInfo;
+import packageName.domain.model.Example;
 
-@Table(name = "T_POETRY")
+@Table(name = "T_EXAMPLE")
 @Entity
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExamplePoemEntity {
+public class ExampleEntity {
 
   @Id
   @GeneratedValue(strategy = AUTO)
   private Long id;
 
-  @Column(name = "poem")
-  private String poem;
+  @Column(name = "DESCRIPTION")
+  private String description;
 
-  public ExamplePoemInfo toModel() {
-    return ExamplePoemInfo.builder().poem(this.poem).build();
+  public Example toModel() {
+    return Example.builder().id(id).description(description).build();
   }
 }
