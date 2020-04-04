@@ -4,9 +4,9 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import packageName.domain.port.ExampleObtainPoem;
-import packageName.repository.ExamplePoetryRepository;
-import packageName.repository.dao.ExamplePoetryDao;
+import packageName.domain.port.ObtainExample;
+import packageName.repository.ExampleRepository;
+import packageName.repository.dao.ExampleDao;
 
 @Configuration
 @EntityScan("packageName.repository.entity")
@@ -14,7 +14,7 @@ import packageName.repository.dao.ExamplePoetryDao;
 public class JpaAdapterConfig {
 
   @Bean
-  public ExampleObtainPoem getExamplePoetryRepository(ExamplePoetryDao poetryDao) {
-    return new ExamplePoetryRepository(poetryDao);
+  public ObtainExample getExampleRepository(ExampleDao exampleDao) {
+    return new ExampleRepository(exampleDao);
   }
 }

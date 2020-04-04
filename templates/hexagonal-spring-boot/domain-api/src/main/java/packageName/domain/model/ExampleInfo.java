@@ -1,5 +1,6 @@
 package packageName.domain.model;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExamplePoemInfo {
+public class ExampleInfo {
 
-  private String poem;
+  private List<Example> examples;
 }
