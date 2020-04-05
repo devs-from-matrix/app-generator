@@ -3,7 +3,7 @@ name: Feature request
 about: Suggest an idea for this project
 title: "[New Feature]"
 labels: ":rocket: enhancement"
-assignees: ''
+assignees: 'paul58914080, anupbaranwal'
 
 ---
 
