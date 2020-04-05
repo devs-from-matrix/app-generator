@@ -8,7 +8,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import packageName.domain.exception.ExampleNotFoundException;
 
-@RestControllerAdvice(basePackages = {"domainname"})
+@RestControllerAdvice(basePackages = {"packageName"})
 public class ExampleExceptionHandler {
 
   @ExceptionHandler(value = ExampleNotFoundException.class)
