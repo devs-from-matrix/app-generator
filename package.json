@@ -12,6 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "assert-ok": "^1.0.0",
+    "axios": "^0.19.2",
     "bluebird": "^3.7.2",
     "del": "^5.1.0",
     "fs-extra": "^9.0.0",
