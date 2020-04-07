@@ -82,6 +82,10 @@
             <groupId>com.fasterxml</groupId>
           </exclusion>
           <exclusion>
+            <artifactId>classmate</artifactId>
+            <groupId>com.fasterxml</groupId>
+          </exclusion>
+          <exclusion>
             <artifactId>jackson-core</artifactId>
             <groupId>com.fasterxml.jackson.core</groupId>
           </exclusion>
