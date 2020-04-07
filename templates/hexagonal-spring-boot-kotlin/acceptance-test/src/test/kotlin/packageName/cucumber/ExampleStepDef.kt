@@ -49,7 +49,7 @@ class ExampleStepDef(restTemplate: TestRestTemplate, exampleDao: ExampleDao) : E
         }
 
         When("user requests for all examples") {
-            val url = LOCALHOST + port + API_URI
+            val url = "$LOCALHOST$port$API_URI"
             responseEntity = restTemplate.getForEntity(url, ExampleInfo::class.java)
         }
 

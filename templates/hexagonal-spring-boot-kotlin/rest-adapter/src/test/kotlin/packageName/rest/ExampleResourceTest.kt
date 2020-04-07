@@ -41,10 +41,10 @@ class ExampleResourceTest {
     @Test
     fun `should give examples when asked for examples with the support of domain stub`() {
         // Given
-        Mockito.lenient().`when`(requestExample!!.getExamples()).thenReturn(mockExampleInfo())
+        Mockito.lenient().`when`(requestExample.getExamples()).thenReturn(mockExampleInfo())
         // When
-        val url = LOCALHOST + port + API_URI
-        val responseEntity = restTemplate!!.getForEntity(url, ExampleInfo::class.java)
+        val url = "$LOCALHOST$port$API_URI"
+        val responseEntity = restTemplate.getForEntity(url, ExampleInfo::class.java)
         // Then
         assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(responseEntity.body).isNotNull
