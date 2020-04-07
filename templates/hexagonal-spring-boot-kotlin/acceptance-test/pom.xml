@@ -13,12 +13,6 @@
     <dependency>
       <groupId>org.dfm</groupId>
       <artifactId>rest-adapter</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>classmate</artifactId>
-          <groupId>com.fasterxml</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.dfm</groupId>
@@ -28,14 +22,14 @@
       <groupId>org.dfm</groupId>
       <artifactId>jpa-adapter</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-kotlin</artifactId>
+    </dependency>
     <!-- Test -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-kotlin</artifactId>
     </dependency>
   </dependencies>
   <build>
@@ -46,8 +40,8 @@
         <version>${cukedoctor-maven-plugin.version}</version>
         <configuration>
           <featuresDir>target/cucumber</featuresDir>
-          <outputFileName>ExamplePoetry</outputFileName>
-          <documentTitle>Example Poetry - Living Documentation</documentTitle>
+          <outputFileName>Example</outputFileName>
+          <documentTitle>Example - Living Documentation</documentTitle>
           <docVersion>${project.version}</docVersion>
           <toc>center</toc>
         </configuration>
