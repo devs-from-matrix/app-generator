@@ -5,7 +5,6 @@ const gulpRename = require('gulp-rename');
 const runSequence = require('gulp4-run-sequence');
 const argv = require('yargs').argv;
 const assertOk = require('assert-ok');
-const del = require('del');
 const fs = require("fs-extra");
 const gulpReplace = require('gulp-replace');
 const axios = require('axios');
@@ -16,34 +15,38 @@ const config = {};
  * Initialize all the configurations
  */
 gulp.task('initialize-config', (done) => {
-  console.log(`Initializing the config ...`);
-  // Validate service name
-  config.domainName = argv.d || argv.domain;
-  assertOk(/^([a-z][a-z0-9]+)(\-[a-z][a-z0-9]+)*$/.test(config.domainName),
-      `Invalid domain name: ${config.domainName}`);
+  if (!config.isInitialized) {
+    // Validate service name
+    config.domainName = argv.d || argv.domain;
+    assertOk(/^([a-z][a-z0-9]+)(\-[a-z][a-z0-9]+)*$/.test(config.domainName),
+        `Invalid domain name: ${config.domainName}`);
 
-  // Validate template name
-  config.templateName = argv.t || argv.templateName;
-  assertOk(!_.isEmpty(config.templateName), 'templateName is required');
+    // Validate template name
+    config.templateName = argv.t || argv.templateName;
+    assertOk(!_.isEmpty(config.templateName), 'templateName is required');
 
-  // Validate template name
-  config.gitHubToken = argv.gt || argv.token;
-  assertOk(!_.isEmpty(config.gitHubToken), 'token is required');
-  config.gitHubOrganization = _.isEmpty(argv.go || argv.organization)
-      ? 'devs-from-matrix' : argv.o || argv.organization;
+    // Validate template name
+    config.gitHubToken = argv.gt || argv.token;
+    assertOk(!_.isEmpty(config.gitHubToken), 'token is required');
 
-  config.domainNameLowerCase = config.domainName.toLowerCase();
-  config.domainNameCamelCase = _.camelCase(config.domainName);
-  config.domainWords = _.words(config.domainName);
-  config.domainGroupWords = _.concat(['org', 'dfm'], config.domainWords);
-  config.domainNameStartCase = _.startCase(config.domainName).replace(' ', '');
-  config.domainNameUpperCase = _.toUpper(_.snakeCase(config.domainWords));
-  config.domainPackage = _.join(config.domainGroupWords, '.');
-  config.newServicePath = _.join(config.domainGroupWords, path.sep);
-  config.domainNamePlural = config.domainName.endsWith('y')
-      ? `${config.domainNameCamelCase.substr(0,
-          config.domainNameCamelCase.length - 1)}ies`
-      : `${config.domainNameCamelCase}s`;
+    const org = argv.go || argv.organization;
+    config.gitHubOrganization = _.isEmpty(org) ? 'devs-from-matrix' : org;
+
+    config.domainNameLowerCase = config.domainName.toLowerCase();
+    config.domainNameCamelCase = _.camelCase(config.domainName);
+    config.domainWords = _.words(config.domainName);
+    config.domainGroupWords = _.concat(['org', 'dfm'], config.domainWords);
+    config.domainNameStartCase = _.startCase(config.domainName).replace(' ',
+        '');
+    config.domainNameUpperCase = _.toUpper(_.snakeCase(config.domainWords));
+    config.domainPackage = _.join(config.domainGroupWords, '.');
+    config.newServicePath = _.join(config.domainGroupWords, path.sep);
+    config.domainNamePlural = config.domainName.endsWith('y')
+        ? `${config.domainNameCamelCase.substr(0,
+            config.domainNameCamelCase.length - 1)}ies`
+        : `${config.domainNameCamelCase}s`;
+    config.isInitialized = true;
+  }
   done();
 });
 
@@ -70,8 +73,6 @@ gulp.task('create-repo', () => {
  * Generate sources into generated folder
  */
 gulp.task('generate', () => {
-  console.log(`Generating the code from the chosen template ...`);
-
   // Ensure your have the generated directory
   fs.ensureDir("generated");
 
@@ -122,11 +123,46 @@ gulp.task('generate', () => {
   .pipe(gulp.dest(`./generated/`));
 });
 
-gulp.task('cleanup', () => {
-  console.log(`Cleaning up the generated code ...`);
-  return fs.emptyDir('generated');
+/**
+ * Clone the repository
+ */
+gulp.task('clone', () => {
+  return require('simple-git/promise')(path.join(__dirname, 'git-generated'))
+  .clone(
+      `https://${config.gitHubOrganization}:${config.gitHubToken}@github.com/${config.gitHubOrganization}/${config.domainNameLowerCase}`);
 });
 
-gulp.task('default', function (done) {
-  runSequence('cleanup', 'initialize-config', 'create-repo', 'generate', done);
+/**
+ * Commit the generated code and push the changes to github
+ */
+gulp.task('commit_and_push', () => {
+  function copy() {
+    return fs.copySync(path.join(__dirname, 'generated'),
+        path.join(__dirname, 'git-generated', config.domainNameLowerCase));
+  }
+
+  function commit() {
+    return new Promise(resolve => {
+      require('simple-git')(
+          path.join(__dirname, 'git-generated', config.domainNameLowerCase))
+      .add('./*')
+      .commit('feat: initial commit from devs-from-matrix/app-generator')
+      .push('origin', 'master', resolve);
+    });
+  }
+
+  return Promise.all([
+    copy(), commit()
+  ]);
 });
+
+gulp.task('cleanup', (done) => {
+  fs.emptyDir('generated');
+  fs.emptyDir('git-generated');
+  done();
+});
+
+gulp.task('default', gulp.series('initialize-config', (done) => {
+  runSequence('cleanup', 'create-repo', 'generate', 'clone', 'commit_and_push',
+      done);
+}));

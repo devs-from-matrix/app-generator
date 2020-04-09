@@ -2,11 +2,11 @@
 .idea
 *.iml
 out
-gen
 
 # Project generated files
 node_modules
 generated
+git-generated
 /templates/hexagonal-spring-boot/acceptance-test/target
 /templates/hexagonal-spring-boot/domain/target
 /templates/hexagonal-spring-boot/domain-api/target
