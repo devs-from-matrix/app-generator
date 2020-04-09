@@ -8,6 +8,7 @@ const assertOk = require('assert-ok');
 const del = require('del');
 const fs = require("fs-extra");
 const gulpReplace = require('gulp-replace');
+const axios = require('axios');
 
 const config = {};
 
@@ -15,6 +16,7 @@ const config = {};
  * Initialize all the configurations
  */
 gulp.task('initialize-config', (done) => {
+  console.log(`Initializing the config ...`);
   // Validate service name
   config.domainName = argv.d || argv.domain;
   assertOk(/^([a-z][a-z0-9]+)(\-[a-z][a-z0-9]+)*$/.test(config.domainName),
@@ -23,6 +25,12 @@ gulp.task('initialize-config', (done) => {
   // Validate template name
   config.templateName = argv.t || argv.templateName;
   assertOk(!_.isEmpty(config.templateName), 'templateName is required');
+
+  // Validate template name
+  config.gitHubToken = argv.gt || argv.token;
+  assertOk(!_.isEmpty(config.gitHubToken), 'token is required');
+  config.gitHubOrganization = _.isEmpty(argv.go || argv.organization)
+      ? 'devs-from-matrix' : argv.o || argv.organization;
 
   config.domainNameLowerCase = config.domainName.toLowerCase();
   config.domainNameCamelCase = _.camelCase(config.domainName);
@@ -39,17 +47,40 @@ gulp.task('initialize-config', (done) => {
   done();
 });
 
+gulp.task('create-repo', () => {
+  const configs = {
+    headers: {
+      Authorization: `Bearer ${config.gitHubToken}`,
+      Accept: 'application/vnd.github.baptiste-preview+json'
+    }
+  };
+  const repoUrl = `https://api.github.com/repos/devs-from-matrix/basic-template-repository/generate`;
+  const data = {
+    owner: config.gitHubOrganization,
+    name: config.domainNameLowerCase,
+    description: `Hexagonal spring boot service for ${config.domainNameLowerCase}`,
+    private: false
+  };
+  return Promise.all([
+    axios.post(repoUrl, data, configs)
+  ]);
+});
+
 /**
  * Generate sources into generated folder
  */
 gulp.task('generate', () => {
-  // ensure your have the generated directory
+  console.log(`Generating the code from the chosen template ...`);
+
+  // Ensure your have the generated directory
   fs.ensureDir("generated");
 
   // Interpolate
   const parsePackageName = gulpReplace('packageName', config.domainPackage);
-  const parseArtifactId = gulpReplace('artifactName', config.domainNameLowerCase);
-  const parsePluralLowerCase = gulpReplace(/examples/g, config.domainNamePlural);
+  const parseArtifactId = gulpReplace('artifactName',
+      config.domainNameLowerCase);
+  const parsePluralLowerCase = gulpReplace(/examples/g,
+      config.domainNamePlural);
   const parsePluralStartCase = gulpReplace(/Examples/g,
       _.startCase(config.domainNamePlural).replace(' ', ''));
   const parseStartCase = gulpReplace(/Example/g, config.domainNameStartCase);
@@ -93,9 +124,9 @@ gulp.task('generate', () => {
 
 gulp.task('cleanup', () => {
   console.log(`Cleaning up the generated code ...`);
-  return del(['generated/**/*',]);
+  return fs.emptyDir('generated');
 });
 
 gulp.task('default', function (done) {
-  runSequence('cleanup', 'initialize-config', 'generate', done);
+  runSequence('cleanup', 'initialize-config', 'create-repo', 'generate', done);
 });
