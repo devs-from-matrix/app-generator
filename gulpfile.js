@@ -9,48 +9,57 @@ const del = require('del');
 const fs = require("fs-extra");
 const gulpReplace = require('gulp-replace');
 
+const config = {};
+
+/**
+ * Initialize all the configurations
+ */
+gulp.task('initialize-config', (done) => {
+  // Validate service name
+  config.domainName = argv.d || argv.domain;
+  assertOk(/^([a-z][a-z0-9]+)(\-[a-z][a-z0-9]+)*$/.test(config.domainName),
+      `Invalid domain name: ${config.domainName}`);
+
+  // Validate template name
+  config.templateName = argv.t || argv.templateName;
+  assertOk(!_.isEmpty(config.templateName), 'templateName is required');
+
+  config.domainNameLowerCase = config.domainName.toLowerCase();
+  config.domainNameCamelCase = _.camelCase(config.domainName);
+  config.domainWords = _.words(config.domainName);
+  config.domainGroupWords = _.concat(['org', 'dfm'], config.domainWords);
+  config.domainNameStartCase = _.startCase(config.domainName).replace(' ', '');
+  config.domainNameUpperCase = _.toUpper(_.snakeCase(config.domainWords));
+  config.domainPackage = _.join(config.domainGroupWords, '.');
+  config.newServicePath = _.join(config.domainGroupWords, path.sep);
+  config.domainNamePlural = config.domainName.endsWith('y')
+      ? `${config.domainNameCamelCase.substr(0,
+          config.domainNameCamelCase.length - 1)}ies`
+      : `${config.domainNameCamelCase}s`;
+  done();
+});
+
 /**
  * Generate sources into generated folder
  */
 gulp.task('generate', () => {
-
-  // Validate service name
-  const domainName = argv.d || argv.domain;
-  assertOk(/^([a-z][a-z0-9]+)(\-[a-z][a-z0-9]+)*$/.test(domainName),
-      `Invalid domain name "${domainName}"`);
-
-  // Validate template name
-  const templateName = argv.t || argv.templateName;
-  assertOk(!_.isEmpty(templateName), 'templateName is required');
-
-  const domainNameLowerCase = domainName.toLowerCase();
-  const domainNameCamelCase = _.camelCase(domainName);
-  const domainWords = _.words(domainName);
-  const domainGroupWords = _.concat(['org', 'dfm'], domainWords);
-  const domainNameStartCase = _.startCase(domainName).replace(' ', '');
-  const domainNameUpperCase = _.toUpper(_.snakeCase(domainWords));
-  const domainPackage = _.join(domainGroupWords, '.');
-  const newServicePath = _.join(domainGroupWords, path.sep);
-  const domainNamePlural = domainName.endsWith('y')
-      ? `${domainNameCamelCase.substr(0, domainNameCamelCase.length - 1)}ies`
-      : `${domainNameCamelCase}s`;
-
   // ensure your have the generated directory
   fs.ensureDir("generated");
 
   // Interpolate
-  const parsePackageName = gulpReplace('packageName', domainPackage);
-  const parseArtifactId = gulpReplace('artifactName', domainNameLowerCase);
-  const parsePluralLowerCase = gulpReplace(/examples/g, domainNamePlural);
-  const parsePluralStartCase = gulpReplace(/Examples/g, _.startCase(domainNamePlural).replace(' ', ''));
-  const parseStartCase = gulpReplace(/Example/g, domainNameStartCase);
-  const parseLowerCase = gulpReplace(/example/g, domainNameCamelCase);
-  const parseUpperCase = gulpReplace(/EXAMPLE/g, domainNameUpperCase);
+  const parsePackageName = gulpReplace('packageName', config.domainPackage);
+  const parseArtifactId = gulpReplace('artifactName', config.domainNameLowerCase);
+  const parsePluralLowerCase = gulpReplace(/examples/g, config.domainNamePlural);
+  const parsePluralStartCase = gulpReplace(/Examples/g,
+      _.startCase(config.domainNamePlural).replace(' ', ''));
+  const parseStartCase = gulpReplace(/Example/g, config.domainNameStartCase);
+  const parseLowerCase = gulpReplace(/example/g, config.domainNameCamelCase);
+  const parseUpperCase = gulpReplace(/EXAMPLE/g, config.domainNameUpperCase);
 
   // Update filename & file path
   const renamePackage = gulpRename(function (file) {
-    replaceName(file, 'packageName', newServicePath);
-    replaceName(file, 'Example', domainNameStartCase);
+    replaceName(file, 'packageName', config.newServicePath);
+    replaceName(file, 'Example', config.domainNameStartCase);
   });
 
   const replaceName = function (file, oldName, newName) {
@@ -63,31 +72,11 @@ gulp.task('generate', () => {
   };
 
   const filesTobeIgnored = [
-    `!${__dirname}/templates/${templateName}/.idea/**`,
-    `!${__dirname}/templates/${templateName}/acceptance-test/target/**`,
-    `!${__dirname}/templates/${templateName}/domain/target/**`,
-    `!${__dirname}/templates/${templateName}/domain-api/target/**`,
-    `!${__dirname}/templates/${templateName}/rest-adapter/target/**`,
-    `!${__dirname}/templates/${templateName}/jpa-adapter/target/**`,
-    `!${__dirname}/templates/${templateName}/bootstrap/target/**`,
-
-    `!${__dirname}/templates/${templateName}/acceptance-test/*.iml`,
-    `!${__dirname}/templates/${templateName}/domain/*.iml`,
-    `!${__dirname}/templates/${templateName}/domain-api/*.iml`,
-    `!${__dirname}/templates/${templateName}/rest-adapter/*.iml`,
-    `!${__dirname}/templates/${templateName}/jpa-adapter/*.iml`,
-    `!${__dirname}/templates/${templateName}/bootstrap/*.iml`,
-
-    `!${__dirname}/templates/${templateName}/acceptance-test/.idea/**`,
-    `!${__dirname}/templates/${templateName}/domain/.idea/**`,
-    `!${__dirname}/templates/${templateName}/domain-api/.idea/**`,
-    `!${__dirname}/templates/${templateName}/rest-adapter/.idea/**`,
-    `!${__dirname}/templates/${templateName}/jpa-adapter/.idea/**`,
-    `!${__dirname}/templates/${templateName}/bootstrap/.idea/**`,
+    //`!${__dirname}/templates/${templateName}/.idea/**`,
   ];
 
   const pathSrc = [
-    `${__dirname}/templates/${templateName}/**`, // template path
+    `${__dirname}/templates/${config.templateName}/**`, // template path
     ...filesTobeIgnored, // do not scan intellij files,
   ];
   return gulp.src(pathSrc, {dot: true})
@@ -104,11 +93,9 @@ gulp.task('generate', () => {
 
 gulp.task('cleanup', () => {
   console.log(`Cleaning up the generated code ...`);
-  return del([
-    'generated/**/*',
-  ]);
+  return del(['generated/**/*',]);
 });
 
 gulp.task('default', function (done) {
-  runSequence('cleanup', 'generate', done);
+  runSequence('cleanup', 'initialize-config', 'generate', done);
 });
