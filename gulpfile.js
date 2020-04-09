@@ -8,12 +8,10 @@ const assertOk = require('assert-ok');
 const fs = require("fs-extra");
 const gulpReplace = require('gulp-replace');
 const axios = require('axios');
+const templates = require('read-data').sync('dfm-templates.json', {});
 
 const config = {};
 
-/**
- * Initialize all the configurations
- */
 gulp.task('initialize-config', (done) => {
   if (!config.isInitialized) {
     // Validate service name
@@ -69,10 +67,33 @@ gulp.task('create-repo', () => {
   ]);
 });
 
-/**
- * Generate sources into generated folder
- */
-gulp.task('generate', () => {
+gulp.task('clone-template-repo', () => {
+  // Get the repoUrl from the templateName argument
+  const selectedTemplate = _.find(templates, template => {
+    return template.name === config.templateName;
+  });
+  if (!selectedTemplate) {
+    throw `unknown template: ${config.templateName}`;
+  }
+  return require('simple-git/promise')(path.join(__dirname, 'templates'))
+  .clone(selectedTemplate.url);
+});
+
+gulp.task('generate-template', gulp.series('clone-template-repo', (resolve) => {
+  // Delete files mentioned in .dfm-generator ignoreFiles
+  const templateConfig = require('read-data').sync(
+      `templates/${config.templateName}/.dfm-generator.yml`, {});
+  fs.removeSync(`templates/${config.templateName}/.git`);
+  if (templateConfig.ignoreFiles) {
+    templateConfig.ignoreFiles.forEach(ignore => {
+      fs.removeSync(`templates/${config.templateName}/${ignore}`);
+      fs.removeSync(`templates/${config.templateName}/.dfm-generator.yml`);
+    });
+  }
+  resolve();
+}));
+
+gulp.task('generate', gulp.series('generate-template', () => {
   // Ensure your have the generated directory
   fs.ensureDir("generated");
 
@@ -103,13 +124,8 @@ gulp.task('generate', () => {
     }
   };
 
-  const filesTobeIgnored = [
-    //`!${__dirname}/templates/${templateName}/.idea/**`,
-  ];
-
   const pathSrc = [
-    `${__dirname}/templates/${config.templateName}/**`, // template path
-    ...filesTobeIgnored, // do not scan intellij files,
+    `${__dirname}/templates/${config.templateName}/**`
   ];
   return gulp.src(pathSrc, {dot: true})
   .pipe(renamePackage)
@@ -121,20 +137,14 @@ gulp.task('generate', () => {
   .pipe(parseLowerCase)
   .pipe(parseUpperCase)
   .pipe(gulp.dest(`./generated/`));
-});
+}));
 
-/**
- * Clone the repository
- */
-gulp.task('clone', () => {
+gulp.task('clone-target', () => {
   return require('simple-git/promise')(path.join(__dirname, 'git-generated'))
   .clone(
       `https://${config.gitHubOrganization}:${config.gitHubToken}@github.com/${config.gitHubOrganization}/${config.domainNameLowerCase}`);
 });
 
-/**
- * Commit the generated code and push the changes to github
- */
 gulp.task('commit_and_push', () => {
   function copy() {
     return fs.copySync(path.join(__dirname, 'generated'),
@@ -159,10 +169,11 @@ gulp.task('commit_and_push', () => {
 gulp.task('cleanup', (done) => {
   fs.emptyDir('generated');
   fs.emptyDir('git-generated');
+  fs.emptyDir('templates');
   done();
 });
 
 gulp.task('default', gulp.series('initialize-config', (done) => {
-  runSequence('cleanup', 'create-repo', 'generate', 'clone', 'commit_and_push',
-      done);
+  runSequence('cleanup', 'create-repo', 'generate', 'clone-target',
+      'commit_and_push', done);
 }));
