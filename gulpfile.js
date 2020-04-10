@@ -173,6 +173,19 @@ gulp.task('cleanup', (done) => {
   done();
 });
 
+gulp.task('helpme', (done) => {
+  console.log('gulp [--options] [value]');
+  console.log(' option \toption \t\t\tdescription \t\t\t\t\t\t type');
+  console.log(' --------------------------------------------------------------------------------------------------------');
+  console.log(' d \t\tdomain \t\t\tThe domain name \t\t\t\t\t [string]');
+  console.log(' t \t\ttemplateName \t\tThe name of the template(refer dfm-templates.json) \t [string]');
+  console.log(' go \t\torganization \t\tGitHub organization where the code would scaffold \t [string]');
+  console.log(' gt \t\ttoken \t\t\tGitHub token with admin access \t\t\t\t [string]');
+  console.log('\n');
+  done();
+});
+
+
 gulp.task('default', gulp.series('initialize-config', (done) => {
   runSequence('cleanup', 'create-repo', 'generate', 'clone-target',
       'commit_and_push', done);
