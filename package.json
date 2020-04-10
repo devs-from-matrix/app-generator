@@ -23,6 +23,7 @@
     "gulp4-run-sequence": "^1.0.1",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
+    "read-data": "^1.1.0",
     "simple-git": "^1.132.0",
     "yargs": "^15.3.1"
   }
