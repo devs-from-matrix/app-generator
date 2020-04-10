@@ -8,18 +8,15 @@ this project was generated with https://github.com/devs-from-matrix/basic-templa
 
 ## How to build ?
 
-- `yarn global add gulp`
+- `npm i -g yarn`
 - `yarn install`
 
 ## How to start ?
 
 ## To run all tasks you can use
 
-`gulp -d [domain-name] -t [template-name]`
+`gulp --d [domain-name] --t [template-name] --go [GitHub Organization] --gt [GitHub Token]` 
 
-## To run the task `generate`
-
-`gulp generate -d [domain-name] -t [template-name]`
 
 ## Contribution guidelines
 
