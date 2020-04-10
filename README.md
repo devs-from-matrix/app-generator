@@ -13,10 +13,13 @@ this project was generated with https://github.com/devs-from-matrix/basic-templa
 
 ## How to start ?
 
-## To run all tasks you can use
+### To run all tasks you can use
 
 `gulp --d [domain-name] --t [template-name] --go [GitHub Organization] --gt [GitHub Token]` 
 
+### Help
+
+`gulp helpme`
 
 ## Contribution guidelines
 
