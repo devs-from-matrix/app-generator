@@ -98,7 +98,7 @@ gulp.task('generate', gulp.series('generate-template', () => {
   fs.ensureDir("generated");
 
   // Interpolate
-  const parsePackageName = gulpReplace('packageName', config.domainPackage);
+  const parsePackageName = gulpReplace('packagename', config.domainPackage);
   const parseArtifactId = gulpReplace('artifactName',
       config.domainNameLowerCase);
   const parsePluralLowerCase = gulpReplace(/examples/g,
@@ -111,7 +111,7 @@ gulp.task('generate', gulp.series('generate-template', () => {
 
   // Update filename & file path
   const renamePackage = gulpRename(function (file) {
-    replaceName(file, 'packageName', config.newServicePath);
+    replaceName(file, 'packagename', config.newServicePath);
     replaceName(file, 'Example', config.domainNameStartCase);
   });
 
