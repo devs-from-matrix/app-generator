@@ -24,7 +24,7 @@
     "lodash": "^4.17.19",
     "moment": "^2.24.0",
     "read-data": "^1.1.0",
-    "simple-git": "^1.132.0",
+    "simple-git": "^3.3.0",
     "yargs": "^15.3.1"
   }
 }
