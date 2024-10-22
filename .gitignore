@@ -7,9 +7,4 @@ out
 node_modules
 generated
 git-generated
-/templates/hexagonal-spring-boot/acceptance-test/target
-/templates/hexagonal-spring-boot/domain/target
-/templates/hexagonal-spring-boot/domain-api/target
-/templates/hexagonal-spring-boot/rest-adapter/target
-/templates/hexagonal-spring-boot/jpa-adapter/target
-/templates/hexagonal-spring-boot/bootstrap/target
+templates
