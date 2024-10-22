@@ -113,6 +113,7 @@ gulp.task('generate', gulp.series('generate-template', () => {
   const renamePackage = gulpRename(function (file) {
     replaceName(file, 'packagename', config.newServicePath);
     replaceName(file, 'Example', config.domainNameStartCase);
+    replaceName(file, 'example', config.domainNameLowerCase);
   });
 
   const replaceName = function (file, oldName, newName) {
@@ -190,3 +191,7 @@ gulp.task('default', gulp.series('initialize-config', (done) => {
   runSequence('cleanup', 'create-repo', 'generate', 'clone-target',
       'commit_and_push', done);
 }));
+// uncomment when you want to test this locally
+/*gulp.task('default', gulp.series('initialize-config', (done) => {
+  runSequence('cleanup', 'generate', done);
+}));*/
